@@ -1,0 +1,32 @@
+# List of paths that contain the binaries expected by flo.  These will be
+# added to PATH before the pipeline is run.
+:add_to_path:
+  - 'unset'
+
+# If migrating annotations from assembly A to assembly B, A is the source
+# and B is the target. Source and target assemblies are specified as path
+# to the corresponding FASTA files (must end in .fa).
+:source_fa: 'unset'
+:target_fa: 'unset'
+
+# Target assembly is split by sequences into 'processes' number of files.
+# BLAT, axtChain and sortChain are run parallely on each file.
+:processes: 40
+
+# Parameters to run blat with.
+#
+# In addition to the options specified here, -noHead option is set by flo.
+# -noHead simply causes the output BLAT output files to not have a header.
+# It doesn't impact accuracy of results.
+#
+# Empty string is equivalent to:
+#
+#   -t=dna -q=dna -tileSize=11 -stepSize=11 -oneOff=0 -minMatch=2
+#   -minScore=30 -minIdentity=90 -maxGap=2 -maxIntron=75000
+#
+:blat_opts: '-tileSize=12 -extendThroughN'
+
+# Path to the GFF files containing annotations on the source assembly that
+# will be lifted to the target assembly.
+:lift:
+  - 'unset'
