@@ -5,12 +5,65 @@ to another. Usually lift over is done because there is a new, improved genome
 assembly for the species and good quality annotations (maybe manually curated
 or experimentally verified) are available on the old assembly.
 
-The idea is simple: align the new assembly with the old one, process the
-alignment data to define how a coordinate or coordinate range on the old
-assembly should be transformed to the new assembly, transform the coordinates.
+The idea is simple: align the new assembly with the old one (e.g., with BLAT),
+process the alignment data to define how a coordinate or coordinate range on
+the old assembly should be transformed to the new assembly (e.g., as a chain
+file), transform the coordinates (e.g., with liftOver).
 
-Tools to carry out lift over are available from [UCSC-Kent toolkit][1]. flo
+Tools to lift over annotations are available from [UCSC-Kent toolkit][1]. flo
 combines them together into a pipeline that is easy to run, tweak, and extend.
+Additionally, flo validates and processes the lifted GFF file to ensure the
+annotations are biologically meaningful, something liftOver doesn't do.
+
+## How to use flo
+
+To use `flo` you must have Ruby 2.0 or higher.
+
+#### Download flo
+
+    wget -c https://github.com/yeban/flo/archive/master.tar.gz -O flo.tar.gz
+    tar xvf flo.tar.gz
+    mv flo-master flo
+    cd flo
+
+#### Install flo's dependencies
+
+1. [UCSC-Kent toolkit][1].
+2. GNU Parallel - to easily parallelize different steps of flo.
+3. genometools - to validate, post-process, and extract sequences from the
+   lifted GFF file.
+
+Running `scripts/install.sh` will pull all of the above into `ext/` directory.
+
+#### Tell flo about your data
+
+First, copy the example configuration file to `opts.yaml`.
+
+    cp opts_example.yaml opts.yaml
+
+Then, edit `opts.yaml` to indicate the location of UCSC-Kent tools bin
+directory, location of source and target assembly, and location of GFF
+file containing annotations (multiple GFF files can be specified).
+
+Further, you should change `processes` setting based on the number of
+cores you have.
+
+The assemblies must be in FASTA format and annotations must be in GFF3
+format. If your annotations are not in GFF format, you will have to
+tweak flo a bit.
+
+#### Run flo
+
+    rake
+
+This will generate a directory corresponding to each GFF file:
+"input_gff_name-liftover-target_assembly_name".
+
+The above dir contains a similarly named GFF file which is the final output.
+Additionally, if flo finds a input_gff_name.cdna/cds/pep.fa alongside the
+input GFF file, flo will automatically generate corresponding FASTA from
+the lifted annotations and print a comparison summary (how many sequences
+in input, how many in output, how many identical).
 
 ## Lift over process
 
@@ -68,64 +121,6 @@ If lifting annotations in GFF format, one can run into issues like:
 4. Duplicated CDS ids (not sure why this happens).
 
 So the resulting GFF should be processed further.
-
-## How to use flo
-
-As can be seen several tools need to be combined in steps to do lift over.
-`flo` abstracts it all to 3 steps as described above: blat, chain, lift.
-
-To use `flo` you must have Ruby 2.0 or higher (2.1 or higher recommended).
-
-Then,
-
-#### Download `flo`
-
-    wget -c https://github.com/yeban/flo/archive/master.tar.gz -O flo.tar.gz
-    tar xvf flo.tar.gz
-    mv flo-master flo
-    cd flo
-
-#### Install UCSC-Kent tookit
-
-    rake kent
-
-#### Copy assemblies and annotations into flo/data
-
-    mkdir data
-    cp from/somewhere/A.fa data
-    cp from/somewhere/B.fa data
-
-The assemblies must be in FASTA format. Annotations must be in GFF format. For
-annotations in other formats you will have to tweak flo a bit.
-
-#### Run BLAT
-
-    rake blat
-
-GNU parallel command is needed for this.
-
-The output will be in `run/blat` directory.
-
-#### Chain the alignments
-
-    rake chain
-
-The output will be in `run/chain` directory.
-
-#### Lift over annotations
-
-    rake liftover
-
-This will transfer annotations to new assembly and post-process the resulting
-GFF as described above.
-
-[`genometools`][3] is required for this. Without `genometools` both the lifted
-and post-processed GFF will still be available to you. But may not be usable.
-
-The output will be in `run/liftover` directory. `liftover.0.gff` is the result
-of `liftOver`. `liftover.1.gff` is the result of post-processing and
-`liftover.gff` is the final output (`liftover.1.gff` processed with
-genometools).
 
 ## How are the results like
 
