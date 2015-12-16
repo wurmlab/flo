@@ -28,8 +28,8 @@ cd ../..
 
 # Genometools
 cd ext
-wget -c https://github.com/genometools/genometools/archive/v1.5.6.tar.gz
+wget -c https://github.com/genometools/genometools/archive/v1.5.6.tar.gz -O v1.5.6.tar.gz
 tar xvf v1.5.6.tar.gz
 rm v1.5.6.tar.gz
 cd genometools-1.5.6
-make cairo=no
+make cairo=no errorcheck=no
