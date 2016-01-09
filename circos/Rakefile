@@ -1,0 +1,50 @@
+require 'yaml'
+
+def add_to_PATH(path)
+  return unless path
+  return unless File.directory? path
+  return if ENV['PATH'].split(':').include? path
+  ENV['PATH'] = "#{path}:#{ENV['PATH']}"
+end
+
+def sizes_to_karyotype(inp, out, filter: 2000000, color: 'chr1')
+  File.foreach(inp).map do |line|
+    id, size = line.split
+    next if Integer(size) < filter
+    label = id; start = 0; stop = size
+    ['chr', '-', id, label, start, stop, color].join(' ')
+  end.
+  compact.tap do |karyo|
+    File.write(out, karyo.join("\n"))
+  end
+end
+
+def chain_to_links(inp, out)
+  psl = out.ext('psl')
+  sh "chainToPslBasic #{inp} #{psl}"
+  File.foreach(psl).map do |line|
+    cols = line.split
+    [cols[9], cols[11], cols[12], cols[13], cols[15], cols[16]].join(' ')
+  end.
+  tap do |links|
+    File.write(out, links.join("\n"))
+  end
+  exit
+end
+
+task :default do
+  FileUtils.cd Rake.application.original_dir
+  fail unless File.exist? 'opts.yaml'
+
+  CONFIG = YAML.load_file 'opts.yaml'
+  Array(CONFIG[:add_to_path]).each do |path|
+    add_to_PATH path
+  end
+
+  mkdir_p 'data/karyotype'
+  #chain_to_links 'raw/liftover.chn', 'data/links.txt'
+  #sizes_to_karyotype 'raw/source.sizes', 'data/karyotype/source.txt', color: 'dred'
+  #sizes_to_karyotype 'raw/target.sizes', 'data/karyotype/target.txt', color: 'blue'
+
+  sh 'circos -conf conf'
+end

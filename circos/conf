@@ -1,0 +1,42 @@
+karyotype = data/karyotype/source.txt,data/karyotype/target.txt
+
+<ideogram>
+  <spacing>
+    default = 0.005r
+  </spacing>
+
+  radius    = 0.9r
+  thickness = 20p
+  fill      = yes
+</ideogram>
+
+<links>
+  <link>
+    file          = data/links.txt
+    color         = black_a4
+    radius        = 0.8r
+    thickness     = 2
+    bezier_radius = 0r
+  </link>
+</links>
+
+################################################################
+# The remaining content is standard and required. It is imported
+# from default files in the Circos distribution.
+#
+# These should be present in every Circos configuration file and
+# overridden as required. To see the content of these files,
+# look in etc/ in the Circos distribution.
+
+<image>
+# Included from Circos distribution.
+<<include etc/image.conf>>
+</image>
+
+# RGB/HSV color definitions, color lists, location of fonts, fill patterns.
+# Included from Circos distribution.
+<<include etc/colors_fonts_patterns.conf>>
+
+# Debugging, I/O an dother system parameters
+# Included from Circos distribution.
+<<include etc/housekeeping.conf>>
