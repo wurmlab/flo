@@ -5,17 +5,39 @@ karyotype = data/karyotype/source.txt,data/karyotype/target.txt
     default = 0.005r
   </spacing>
 
-  radius    = 0.9r
-  thickness = 20p
   fill      = yes
+  radius    = 0.7r
+  thickness = 10p
+
+  show_label   = yes
+  label_size   = 30p
+  label_font   = default
+  label_radius = 1r + 10p
+
+  show_ticks       = yes
+  show_tick_labels = yes
 </ideogram>
+
+<ticks>
+  color            = black
+  format           = %d
+  radius           = 1r
+  thickness        = 2p
+  multiplier       = 1e-6
+  chromosome_units = 1000000
+
+  <tick>
+    spacing        = 1000000b
+    size           = 10p
+  </tick>
+</ticks>
 
 <links>
   <link>
     file          = data/links.txt
     color         = black_a4
-    radius        = 0.8r
-    thickness     = 2
+    radius        = 0.999r
+    thickness     = 1p
     bezier_radius = 0r
   </link>
 </links>

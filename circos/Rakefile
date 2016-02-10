@@ -33,15 +33,15 @@ def chain_to_links(inp, out)
 end
 
 task :default do
-  FileUtils.cd Rake.application.original_dir
-  fail unless File.exist? 'opts.yaml'
+  #FileUtils.cd Rake.application.original_dir
+  #fail unless File.exist? 'opts.yaml'
 
-  CONFIG = YAML.load_file 'opts.yaml'
-  Array(CONFIG[:add_to_path]).each do |path|
-    add_to_PATH path
-  end
+  #CONFIG = YAML.load_file 'opts.yaml'
+  #Array(CONFIG[:add_to_path]).each do |path|
+    #add_to_PATH path
+  #end
 
-  mkdir_p 'data/karyotype'
+  #mkdir_p 'data/karyotype'
   #chain_to_links 'raw/liftover.chn', 'data/links.txt'
   #sizes_to_karyotype 'raw/source.sizes', 'data/karyotype/source.txt', color: 'dred'
   #sizes_to_karyotype 'raw/target.sizes', 'data/karyotype/target.txt', color: 'blue'
