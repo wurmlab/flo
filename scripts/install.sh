@@ -1,3 +1,9 @@
+#!/usr/bin/env sh
+
+# Copyright 2016 Anurag Priyam - MIT License
+#
+# Installs flo's depenedencies in ./ext, on a Linux box.
+
 # UCSC-Kent
 mkdir -p ext/kent/bin
 cd ext/kent/bin

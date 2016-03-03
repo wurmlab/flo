@@ -1,23 +1,19 @@
-# Copyright 2015 Anurag Priyam - MIT License
+# Copyright 2015-2016 Anurag Priyam - MIT License
 #
-# Same species, annotation lift over pipeline.
-#
-# Based on the lift over procedure deseribed at:
-# http://genomewiki.ucsc.edu/index.php/LiftOver_Howto &
+# Same species, annotation lift over pipeline based on the lift over procedure
+# described at:
 # http://hgwdev.cse.ucsc.edu/~kent/src/unzipped/hg/doc/liftOver.txt
 #
 # Additional references:
+# http://genomewiki.ucsc.edu/index.php/LiftOver_Howto
 # http://genomewiki.ucsc.edu/index.php/Chains_Nets
-# https://genome.ucsc.edu/goldenPath/help/net.html
 # http://genome.ucsc.edu/goldenpath/help/chain.html
+# http://genome.ucsc.edu/goldenPath/help/net.html
 # http://asia.ensembl.org/info/website/upload/psl.html
-#
-# The pipeline depends on GNU parallel, genometools (> 1.5.5) and the following
-# tools from UCSC-Kent tookit: faSplit, faToTwoBit, twoBitInfo, blat, axtChain,
-# chainSort, chainMergeSort, chainSplit, chainNet, netChainSubset, and liftOver.
 
 require 'yaml'
-require 'tempfile'
+
+require_relative 'scripts/helpers'
 
 def add_to_PATH(path)
   return unless path
@@ -34,24 +30,6 @@ def to_sizes(twobit)
   sh "twoBitInfo #{twobit} stdout | sort -k2nr > #{twobit.ext('sizes')}"
 end
 
-def extract_cdna(fas, gff)
-  sh "gt extractfeat -type exon -join -retainids -coords"                      \
-     " -seqfile #{fas} -matchdescstart"                                        \
-     " #{gff} > #{gff.ext('.cdna.fa')}"
-end
-
-def extract_cds(fas, gff)
-  sh "gt extractfeat -type CDS -join -retainids -coords"                       \
-     " -seqfile #{fas} -matchdescstart"                                        \
-     " #{gff} > #{gff.ext('.cds.fa')}"
-end
-
-def extract_pep(fas, gff)
-  sh "gt extractfeat -type CDS -translate -join -retainids -coords"            \
-     " -seqfile #{fas} -matchdescstart"                                        \
-     " #{gff} > #{gff.ext('.pep.fa')}"
-end
-
 # Addresses the following issues in the given GFF file.
 #
 # a. mRNA with subfeatures on different scaffolds. Such annotations are
@@ -59,8 +37,6 @@ end
 # b. CDS with no mRNA. An mRNA is added around these CDS.
 # c. mRNA with no CDS. Such mRNAs are removed.
 def process_gff(gff, out)
-  require 'bio/db/gff'
-
   # Obtain all annotations from the lifted GFF3 file.
   records = Bio::GFF::GFF3.new(File.read(gff)).records
   records.reject! { |rec| rec.class != Bio::GFF::GFF3::Record }
@@ -103,27 +79,19 @@ def process_gff(gff, out)
 end
 
 def num_sequences(fas)
-  `grep '>' #{fas} | wc -l`.strip
+  sequences(fas).count
 end
 
 def num_exact(fas1, fas2)
-  Dir.mktmpdir do |dir|
-    system "grep -v '>' #{fas1} | sort > #{dir}/#{File.basename fas1}"
-    system "grep -v '>' #{fas2} | sort > #{dir}/#{File.basename fas2}"
-    comm =
-      "comm -12"                                                               \
-      " #{dir}/#{File.basename fas1}"                                          \
-      " #{dir}/#{File.basename fas2}"                                          \
-      " | wc -l"
-    `#{comm}`.strip
-  end
+  (sequences(fas1).values &
+   sequences(fas2).values).count
 end
 
 def summarize(source, lifted, outdir)
   File.open("#{outdir}/summary.txt", 'w') do |file|
-    %w(cdna cds pep).each do |tag|
-      fas1 = source.ext(".#{tag}.fa")
-      fas2 = lifted.ext(".#{tag}.fa")
+    %w(exonic coding).each do |tag|
+      fas1 = "#{source}.#{tag}.fa"
+      fas2 = "#{lifted}.#{tag}.fa"
       next unless File.exist?(fas1) || File.exist?(fas2)
 
       file.puts tag.upcase
@@ -139,8 +107,10 @@ def parallel(files, template)
   jobs = files.map { |file| template % { :this => file } }
   joblst = "run/joblst.#{name}"
   joblog = "run/joblog.#{name}"
+  jobout = "run/jobout.#{name}"
   File.write(joblst, jobs.join("\n"))
-  sh "parallel --joblog #{joblog} -j #{jobs.length} -a #{joblst}"
+  sh "parallel --arg-file #{joblst} --joblog #{joblog} --jobs #{jobs.length}"  \
+     " > #{jobout} 2>&1"
 end
 
 ################################################################################
@@ -160,7 +130,13 @@ file 'run/liftover.chn' do
   to_sizes 'run/source.2bit'
   to_sizes 'run/target.2bit'
 
-  # Partition target assembly.
+  # Uncomment to create an ooc file. Use the same tileSize as in blat_opts.
+  #
+  # sh "blat run/source.fa /dev/null /dev/null -makeOoc=12.ooc"                \
+  #    " -tileSize=12 -repMatch=100"
+
+  # Partition target assembly into chunks of 5k nucleotides such that chunks
+  # corresponding to a scaffold / contig end up in the same file.
   sh "faSplit sequence run/target.fa #{processes} run/chunk_"
 
   parallel Dir['run/chunk_*.fa'],
@@ -170,6 +146,8 @@ file 'run/liftover.chn' do
   # BLAT each chunk of the target assembly to the source assembly.
   parallel Dir['run/chunk_*.fa'],
     "blat -noHead #{blat_opts} run/source.fa %{this} %{this}.psl"
+    # Uncomment to use an ooc file.
+    # "blat -noHead -ooc=12.ooc #{blat_opts} run/source.fa %{this} %{this}.psl"
 
   parallel Dir['run/chunk_*.fa'],
     "liftUp -type=.psl -pslQ -nohead"                                          \
@@ -218,14 +196,15 @@ task 'default' do
     out = "#{outdir}/#{outdir}.gff3"
 
     # Lift over the annotations from source assembly to target assembly.
-    sh "liftOver -gff #{inp} run/liftover.chn"                                 \
-       " #{outdir}/lifted.gff3 #{outdir}/unlifted.gff3"
+    sh "liftOver -minMatch=1.00 -gff #{inp}"                                   \
+       " run/liftover.chn #{outdir}/lifted.gff3"                               \
+       " #{outdir}/unlifted.gff3 > run/jobout.liftOver 2>&1"
+
     process_gff "#{outdir}/lifted.gff3", out
-
-    extract_cdna('run/target.fa', out) if File.exist? inp.ext('cdna.fa')
-    extract_cds('run/target.fa', out) if File.exist? inp.ext('cds.fa')
-    extract_pep('run/target.fa', out) if File.exist? inp.ext('pep.fa')
-
+    sh "scripts/extractfeat.rb run/source.fa #{inp}"                           \
+      " #{inp}.exonic.fa #{inp}.coding.fa"
+    sh "scripts/extractfeat.rb run/target.fa #{out}"                           \
+      " #{out}.exonic.fa #{out}.coding.fa"
     summarize inp, out, outdir
   end
 end
