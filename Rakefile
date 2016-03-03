@@ -163,15 +163,14 @@ file 'run/liftover.chn' do
     'chainSort %{this} %{this}.sorted'
 
   # Combine sorted chain files into a single sorted chain file.
-  sh 'chainMergeSort run/*.chn.sorted | chainSplit run stdin -lump=1'
-  mv 'run/000.chain', 'run/combined.chn.sorted'
+  sh 'chainMergeSort run/*.chn.sorted  > run/combined.chn.sorted'
 
-  # Derive net file from combined, sorted chain file.
+  # Net the chains.
   sh 'chainNet'                                                                \
      ' run/combined.chn.sorted run/source.sizes run/target.sizes'              \
      ' run/combined.chn.sorted.net /dev/null'
 
-  # Subset combined, sorted chain file.
+  # Keep the subset of all chains that were netted.
   sh 'netChainSubset'                                                          \
      ' run/combined.chn.sorted.net run/combined.chn.sorted'                    \
      ' run/liftover.chn'
