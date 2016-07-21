@@ -67,7 +67,7 @@ def process_gff(gff, out)
 
   # Group together sibling CDS and their mRNA parent.
   records = records.group_by do |rec|
-    key = 'ID'     if rec.feature_type == 'mRNA'
+    key = 'ID'     if rec.feature_type =~ /mRNA|transcript/
     key = 'Parent' if rec.feature_type =~ /exon|CDS/
     rec.attributes.assoc(key).last
   end
