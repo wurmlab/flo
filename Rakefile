@@ -61,18 +61,29 @@ end
 def process_gff(gff, out)
   require 'bio/db/gff'
 
-  # Obtain all annotations from the lifted GFF3 file.
-  records = Bio::GFF::GFF3.new(File.read(gff)).records
-  records.reject! { |rec| rec.class != Bio::GFF::GFF3::Record }
+  # Read the lifted gff file into memory and parse it.
+  gff3 = Bio::GFF::GFF3.new File.read(gff)
 
-  # Group together sibling CDS and their mRNA parent.
-  records = records.group_by do |rec|
-    key = 'ID'     if rec.feature_type =~ /mRNA|transcript/
-    key = 'Parent' if rec.feature_type =~ /exon|CDS/
-    rec.attributes.assoc(key).last
+  # Obtain transcripts and their children. genes and other features are not
+  # processed.
+  transcripts = Hash.new { |h, k| h[k] = [] }
+  gff3.records.each do |record|
+    # GFF file includes features, comments and directives. We are only
+    # interested in "features".
+    next unless record.respond_to?(:feature_type)
+
+    # If the feature is a transcript, we consider its ID attribute.
+    if record.feature_type =~ /mRNA|transcript/
+      transcripts[record.attributes.assoc('ID')] << record
+    end
+
+    # If the feature is exon or CDS, we consider its Parent attribute.
+    if record.feature_type =~ /exon|CDS/
+      transcripts[record.attributes.assoc('Parent')] << record
+    end
   end
 
-  records = records.map do |id, annots|
+  transcripts = transcripts.map do |id, annots|
     next unless annots.map(&:seqname).uniq.length == 1    # mRNA on different scaffolds/contigs
     next unless annots.map(&:feature_type).include? 'CDS' # mRNA with no CDS
 
@@ -97,7 +108,7 @@ def process_gff(gff, out)
   end.flatten.compact
 
   tmp = Tempfile.open('lifted')
-  tmp.write records.join
+  tmp.write transcripts.join
   tmp.close
   sh "gt gff3 -tidy -sort -addids -retainids #{tmp.path} > #{out}"
 end
