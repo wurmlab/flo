@@ -34,8 +34,10 @@ To use `flo` you must have Ruby 2.0 or higher.
 2. GNU Parallel - to easily parallelize different steps of flo.
 3. genometools - to validate, post-process, and extract sequences from the
    lifted GFF file.
+4. BioRuby gem - for parse GFF files for post-processing after lift over.
 
-Running `scripts/install.sh` will pull all of the above into `ext/` directory.
+Running `scripts/install.sh` will install 1-3 into `ext/` directory. For
+BioRuby gem, please run `gem install bio` or `sudo gem install bio`.
 
 #### Tell flo about your data
 
