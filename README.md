@@ -1,162 +1,97 @@
-# flo - same species annotations lift over pipeline
+# flo - basic gff annotations lift over using chain files
 
-Lift over is the process of transferring annotations from one genome assembly
-to another. Usually lift over is done because there is a new, improved genome
-assembly for the species but good quality annotations (maybe manually curated
-or experimentally verified) are available on the old assembly.
+Lift over is a way of mapping annotations from one genome assembly to another.
+The idea "lift over" is same as what tools like UCSC LiftOver, NCBI's LiftUp
+web service do. However, NCBI and UCSC's webs services are available only for
+a limited number of species.
 
-The idea is simple: align the new assembly with the old one (e.g., with BLAT),
-process the alignment data to define how a coordinate or coordinate range on
-the old assembly should be transformed to the new assembly (e.g., as a chain
-file), transform the coordinates (e.g., with liftOver).
+To perform lift over locally, one can use UCSC chain files ([Kent et al 2003][kent2003])
+with programs such as UCSC's liftOver or [CrossMap][crossmap]. A chain file captures
+large, homologous segments between two genomes as chains of gapless blocks of
+alignment. One way of generating chain files is using [this bash script][kent-script]
+and [UCSC tools][ucsc-tools].
 
-Tools to lift over annotations are available from [UCSC-Kent toolkit][1]. flo
-combines them together into a pipeline that is easy to run, tweak, and extend.
-Additionally, flo validates and processes the lifted GFF file to ensure the
-annotations are biologically meaningful, something liftOver doesn't do.
+flo is an implementation of the above script in Ruby programming language. Further,
+both liftOver and CrossMap process GFF files line by line instead of transcripts as
+a whole. This results in some non-biologically meaningful output. flo provides a
+basic filtering of UCSC liftOver's GFF output.
 
-[Usage](#usage) | [Approach](#approach) | [Discussion](#discussion)
+[Using flo](#using-flo) | [Results & discussion](#results--discussion) | [Tweaking flo](#tweak-flo)
 
-## Usage
+## Using flo
 
-To use `flo` you must have Ruby 2.0 or higher.
+To use flo you must have Ruby 2.0 or higher and the BioRuby gem. Ruby 2.0 can
+be installed through package managers on Linux and is available by default on
+Mac. To install BioRuby gem:
 
-#### Download flo
+    sudo gem install bio
+
+flo additionally requires a few programs from [UCSC tools][ucsc-tools], [GNU
+Parallel][gnu-parallel] and [genometools][genometools]. These can be
+installed in any directory by running 'scripts/install.sh' script
+after you have downloaded flo:
 
     wget -c https://github.com/yeban/flo/archive/master.tar.gz -O flo.tar.gz
     tar xvf flo.tar.gz
     mv flo-master flo
-    cd flo
 
-#### Install flo's dependencies
+It's best to run flo in a new directory - we will call it project dir:
 
-1. [UCSC-Kent toolkit][1].
-2. GNU Parallel - to easily parallelize different steps of flo.
-3. genometools - to validate, post-process, and extract sequences from the
-   lifted GFF file.
-4. BioRuby gem - for parse GFF files for post-processing after lift over.
+    mkdir flo_species_name
+    cd flo_species_name
 
-Running `scripts/install.sh` will install 1-3 into `ext/` directory. For
-BioRuby gem, please run `gem install bio` or `sudo gem install bio`.
+Copy over example configuration file from where you installed flo to
+project dir:
 
-#### Tell flo about your data
+    cp /path/to/flo/opts_example.yaml opts.yaml
 
-First, copy the example configuration file (`opts_example.yaml`) to
-`opts.yaml`.
+Install flo's dependencies in `ext/` directory in the project dir:
 
-    cp opts_example.yaml opts.yaml
+    /path/to/flo/scripts/install.sh
 
-Then, edit `opts.yaml` to indicate: the location of UCSC-Kent toolkit, GNU
-Parallel, and genometools; location of source and target assembly in FASTA
-format; location of GFF3 file(s) containing the annotations on the source
-assembly and number of CPU cores to use.
+Now edit `opts.yaml` to indicate the location of source and target assembly in
+FASTA format (required), location of GFF3 file(s) containing annotations on
+the source assembly (optional - if you omit this, flo will stop after
+generating the chain file) and number of CPU cores to use (required).
 
-#### Run flo
+Finally, run flo as:
 
-    rake
+    rake -f /path/to/flo/Rakefile
 
-This will generate a directory corresponding to each GFF file:
-"input_gff_name-liftover-target_assembly_name".
+This will generate a directory corresponding to each GFF file (if provided):
+"input_gff_name-liftover-target_assembly_name". The above dir contains a
+similarly named GFF file which is the final output.
 
-The above dir contains a similarly named GFF file which is the final output.
-Additionally, if flo finds a input_gff_name.cdna/cds/pep.fa alongside the
-input GFF file, flo will automatically generate corresponding FASTA from
-the lifted annotations and print a comparison summary (how many sequences
-in input, how many in output, how many identical).
+The chain file generated by flo can be found at 'run/liftover.chn'.
 
-## Approach
+## Results & discussion
+Both strengths and weaknesses of flo largely reflect that of the underlying
+tools - the chain file and UCSC liftOver. In general, gaps and errors in
+assemblies may split a long chain. Gene models that are split across
+different chains as well as those that are duplicated in the target
+assembly are not lifted.
 
-### Full genome alignment
+- For an ant genome (~350 Mb) we saw 90% annotations map identically to
+the new assembly (unpublished result).
+- flo has been used in [First draft assembly and annotation of the
+genome of a California Endemic Oak _Quercus lobata_ Née (Fagaceae).
+Sork et al 2016. G3: Genes, Genomes, Genetics 6(11): 3485-3495.](https://doi.org/10.1534/g3.116.030411)
 
-This is done with BLAT. BLAT is fast, but doing a full genome can still take a
-significant amount of time. So the target assembly is split into chunks of 5k
-nucleotides. The chunks are then clubbed into "n" groups, depending on the
-number of CPU cores on the system, and BLATed parallely against the source
-assembly.
+## Tweak flo
+If you would like to optimise how chain files are created:
+- UCSC wiki and website is an amazing resource to learn about BLAT and
+  chain files. Don't forget to read Kent 2003 paper cited above first.
+- Read the `Rakefile` from top to bottom. Ruby is similar, yet simpler
+  compared to Perl and bash.
 
-Because it was chunks of the new assembly that was BLATed against the old
-assembly the alignment coordinates will have to be changed back to how it
-would look if the entire new assembly were BLATed against the old assembly.
-This process is called "lift up".
+You can test things by lifting annotations between the same assembly.
 
-Lift up is done with the `liftUp` tool from UCSC-Kent toolkit and with the help
-of a lift up (`.lft`) file. A lift up file is generated with the `-lift` option
-of the `faSplit` tool used for chunking and grouping the target assembly.
+---
+Copyright 2017 Anurag Priyam, Queen Mary University of London
 
-### Chaining, netting, filtering
-
-`.psl` files containing alignment data from BLAT are converted into a [chain
-file][2]. This is done with the `axtChain` tool. `axtChain` finds pairwise
-alignments in the psl files (one between the same target and query sequence)
-and joins them together, if overlapping and combining them will result in a
-higher scoring longer alignment.
-
-The resulting chain files are then sorted, merged, and then split with new
-assembly as the reference. This bit doesn't make sense to me either, but is
-important.
-
-The resulting chain file is then "netted" using `chainNet` tool. Netting
-organizes the chains in a hierarchal collection with the highest-scoring
-non-overlapping chains on top, and their gaps filled in where possible by
-lower-scoring chains, which in turn may have gaps filled in by lower-level
-chains and so on.
-
-The chain file in the previous step is then filtered against the net file
-obtained above to get a lift over file that can be used for coordinate
-transformation.
-
-### Lift over
-
-With the above lift over file annotations on the old assembly can be
-transferred to the new assembly using `liftOver` tool.
-
-If lifting annotations in GFF format, one can run into issues like:
-
-1. mRNA mapped to different scaffolds.
-2. mRNA with no CDS.
-3. CDS with no mRNA.
-4. Duplicated CDS ids (not sure why this happens).
-
-So the resulting GFF should be processed further.
-
-## Discussion
-
-`flo` in itself doesn't do anything new or novel. It merely combines existing
-tools into a usable fashion.
-
-We used `flo` to migrate to do same species lift over with ~350Mb genome size.
-94% of the annotations were mapped to the final assembly. Of the mapped
-annotations, 90% were good.
-
-## What if annotations are not in GFF format
-
-You could convert to GFF or tweak the "lift over" part of flow. If your
-annotations are in bed or gp format, you should consider tweaking `flo`
-instead of converting to GFF.
-
-If you want to use BAM format check out [`CrossMap`][4].
-
-## I have a big genome. It's taking a very long time to run BLAT.
-
-Try creating an ooc file.
-
-```
-sh "blat ../../data/#{SOURCE}.fa /dev/null /dev/null" \
-     " -tileSize=11 -makeOoc=11.ooc -repMatch=100"
-
-# ...
-
-"blat -noHead -fastMap -ooc=11.ooc -minScore=100 -minIdentity=98" \
-```
-
-You can do this in the `joblist` task.
-
-## Can I use flo for different species lift over / creating chain files
-
-Not as it is. But you perhaps reuse the framework and much of the alignment and
-chaining-netting step. blastz or another may be more suitable instead of blat.
-
-[1]: http://hgdownload.cse.ucsc.edu/admin/exe/
-[2]: http://genome.ucsc.edu/goldenpath/help/chain.html
-[3]: http://genometools.org/
-[4]: http://crossmap.sourceforge.net/
+[kent-script]: http://hgwdev.cse.ucsc.edu/~kent/src/unzipped/hg/doc/liftOver.txt
+[kent2003]: http://www.pnas.org/content/100/20/11484.full
+[ucsc-tools]: http://hgdownload.cse.ucsc.edu/admin/exe/
+[gnu-parallel]: https://www.gnu.org/software/parallel/
+[genometools]: http://genometools.org/
+[crossmap]: http://crossmap.sourceforge.net/
