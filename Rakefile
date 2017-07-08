@@ -1,6 +1,6 @@
-# Copyright 2015 Anurag Priyam - MIT License
+# Copyright 2017 Anurag Priyam - MIT License
 #
-# Same species, annotation lift over pipeline.
+# Annotation lift over pipeline.
 #
 # Based on the lift over procedure deseribed at:
 # http://genomewiki.ucsc.edu/index.php/LiftOver_Howto &
@@ -19,82 +19,44 @@
 require 'yaml'
 require 'tempfile'
 
-def add_to_PATH(path)
-  return unless path
-  return unless File.directory? path
-  return if ENV['PATH'].split(':').include? path
-  ENV['PATH'] = "#{path}:#{ENV['PATH']}"
-end
+# Reads config file. Runs task to create chain file, then runs liftOver.
+task 'default' do
+  # Check for presence of config file. Exit if not found.
+  unless File.exist? 'flo_opts.yaml'
+    puts "Config file not found. See README for how to use flo."
+    exit!
+  end
 
-def to_2bit(fas)
-  sh "faToTwoBit #{fas} #{fas.ext('2bit')}"
-end
+  # Read config file.
+  CONFIG = YAML.load_file 'flo_opts.yaml'
 
-def to_sizes(twobit)
-  sh "twoBitInfo #{twobit} stdout | sort -k2nr > #{twobit.ext('sizes')}"
-end
+  # Add dirs specified in config to PATH.
+  Array(CONFIG[:add_to_path]).each { |path| add_to_PATH path }
 
-def extract_cdna(fas, gff)
-  sh "gt extractfeat -type exon -join -retainids -coords"                      \
-     " -seqfile #{fas} -matchdescstart"                                        \
-     " #{gff} > #{gff.ext('.cdna.fa')}"
-end
+  # Create chain file.
+  task('run/liftover.chn').invoke
 
-def extract_cds(fas, gff)
-  sh "gt extractfeat -type CDS -join -retainids -coords"                       \
-     " -seqfile #{fas} -matchdescstart"                                        \
-     " #{gff} > #{gff.ext('.cds.fa')}"
-end
+  # Lift over the given GFF3 files.
+  Array(CONFIG[:lift]).each do |inp|
+    outdir = "run/#{inp.ext}"
+    mkdir outdir
 
-def extract_pep(fas, gff)
-  sh "gt extractfeat -type CDS -translate -join -retainids -coords"            \
-     " -seqfile #{fas} -matchdescstart"                                        \
-     " #{gff} > #{gff.ext('.pep.fa')}"
-end
+    # Lift over the annotations from source assembly to target assembly.
+    sh "liftOver -gff #{inp} run/liftover.chn #{outdir}/lifted.gff3" \
+       " #{outdir}/unlifted.gff3"
 
-def num_sequences(fas)
-  `grep '>' #{fas} | wc -l`.strip
-end
+    # Clean lifted annotations.
+    sh "#{__dir__}/gff_recover.rb #{outdir}/lifted.gff3" \
+       " | gt gff3 -tidy -sort -addids -retainids -"     \
+       " > #{outdir}/lifted_cleaned.gff"
 
-def num_exact(fas1, fas2)
-  Dir.mktmpdir do |dir|
-    system "grep -v '>' #{fas1} | sort > #{dir}/#{File.basename fas1}"
-    system "grep -v '>' #{fas2} | sort > #{dir}/#{File.basename fas2}"
-    comm =
-      "comm -12"                                                               \
-      " #{dir}/#{File.basename fas1}"                                          \
-      " #{dir}/#{File.basename fas2}"                                          \
-      " | wc -l"
-    `#{comm}`.strip
+    # Symlink input gff to outdir and summarise / validate.
+    sh "ln -s #{File.expand_path inp} #{outdir}/input.gff"
+    summarize outdir
   end
 end
 
-def summarize(source, lifted, outdir)
-  File.open("#{outdir}/summary.txt", 'w') do |file|
-    %w(cdna cds pep).each do |tag|
-      fas1 = source.ext(".#{tag}.fa")
-      fas2 = lifted.ext(".#{tag}.fa")
-      next unless File.exist?(fas1) || File.exist?(fas2)
-
-      file.puts tag.upcase
-      file.puts "  source: #{num_sequences(fas1)}"
-      file.puts "  lifted: #{num_sequences(fas2)}"
-      file.puts "  exact:  #{num_exact(fas1, fas2)}"
-    end
-  end
-end
-
-def parallel(files, template)
-  name = template.split.first
-  jobs = files.map { |file| template % { :this => file } }
-  joblst = "run/joblst.#{name}"
-  joblog = "run/joblog.#{name}"
-  File.write(joblst, jobs.join("\n"))
-  sh "parallel --joblog #{joblog} -j #{jobs.length} -a #{joblst}"
-end
-
-################################################################################
-
+# Task to create chain file.
 file 'run/liftover.chn' do
   mkdir 'run'
 
@@ -149,37 +111,86 @@ file 'run/liftover.chn' do
      ' run/liftover.chn'
 end
 
-task 'default' do
-  FileUtils.cd Rake.application.original_dir
-  fail unless File.exist? 'opts.yaml'
 
-  CONFIG = YAML.load_file 'opts.yaml'
-  Array(CONFIG[:add_to_path]).each do |path|
-    add_to_PATH path
+### Helpers ###
+
+def add_to_PATH(path)
+  return unless path
+  return unless File.directory? path
+  return if ENV['PATH'].split(':').include? path
+  ENV['PATH'] = "#{path}:#{ENV['PATH']}"
+end
+
+def to_2bit(fas)
+  sh "faToTwoBit #{fas} #{fas.ext('2bit')}"
+end
+
+def to_sizes(twobit)
+  sh "twoBitInfo #{twobit} stdout | sort -k2nr > #{twobit.ext('sizes')}"
+end
+
+def extract_cdna(fas, gff)
+  sh "gt extractfeat -type exon -join -retainids"  \
+     " -seqfile #{fas} -matchdescstart"            \
+     " #{gff} > #{gff.ext('.cdna.fa')}"
+end
+
+def extract_cds(fas, gff)
+  sh "gt extractfeat -type CDS -join -retainids"   \
+     " -seqfile #{fas} -matchdescstart"            \
+     " #{gff} > #{gff.ext('.cds.fa')}"
+end
+
+def extract_pep(fas, gff)
+  sh "gt extractfeat -type CDS -translate -join -retainids" \
+     " -seqfile #{fas} -matchdescstart"                     \
+     " #{gff} > #{gff.ext('.pep.fa')}"
+end
+
+def num_sequences(fas)
+  `grep '>' #{fas} | wc -l`.strip
+end
+
+def num_exact(fas1, fas2)
+  ENV['TMPDIR'] = Dir.pwd
+  dir = Dir.mktmpdir
+  system "grep -v '>' #{fas1} | sort > #{dir}/#{File.basename fas1}"
+  system "grep -v '>' #{fas2} | sort > #{dir}/#{File.basename fas2}"
+  `comm -12 #{dir}/#{File.basename fas1} \
+   #{dir}/#{File.basename fas2} | wc -l`.strip
+end
+
+def summarize(outdir)
+  inp_gff = "#{outdir}/input.gff"
+  out_gff = "#{outdir}/lifted_cleaned.gff"
+
+  extract_cdna('run/source.fa', inp_gff)
+  extract_cds('run/source.fa', inp_gff)
+  extract_pep('run/source.fa', inp_gff)
+
+  extract_cdna('run/target.fa', out_gff)
+  extract_cds('run/target.fa', out_gff)
+  extract_pep('run/target.fa', out_gff)
+
+  File.open("#{outdir}/summary.txt", 'w') do |file|
+    %w(cdna cds pep).each do |tag|
+      fas1 = inp_gff.ext(".#{tag}.fa")
+      fas2 = out_gff.ext(".#{tag}.fa")
+      next unless File.exist?(fas1) || File.exist?(fas2)
+
+      file.puts tag.upcase
+      file.puts "  source: #{num_sequences(fas1)}"
+      file.puts "  target: #{num_sequences(fas2)}"
+      file.puts "  exact:  #{num_exact(fas1, fas2)}"
+    end
   end
+end
 
-  Rake.application['run/liftover.chn'].invoke
-  Array(CONFIG[:lift]).each do |inp|
-    outdir =
-      "#{File.basename(inp, '.gff3')}-liftover-"                               \
-      "#{File.basename(CONFIG[:target_fa], '.fa')}"
-    mkdir outdir
-
-    out = "#{outdir}/#{outdir}.gff3"
-
-    # Lift over the annotations from source assembly to target assembly.
-    sh "liftOver -gff #{inp} run/liftover.chn #{outdir}/lifted.gff3" \
-       " #{outdir}/unlifted.gff3"
-
-    # Process lifted gff file.
-    sh "#{__dir__}/gff_recover.rb #{outdir}/lifted.gff3" \
-       " | gt gff3 -tidy -sort -addids -retainids -"     \
-       " > #{out}"
-
-    extract_cdna('run/target.fa', out) if File.exist? inp.ext('cdna.fa')
-    extract_cds('run/target.fa', out) if File.exist? inp.ext('cds.fa')
-    extract_pep('run/target.fa', out) if File.exist? inp.ext('pep.fa')
-
-    summarize inp, out, outdir
-  end
+def parallel(files, template)
+  name = template.split.first
+  jobs = files.map { |file| template % { :this => file } }
+  joblst = "run/joblst.#{name}"
+  joblog = "run/joblog.#{name}"
+  File.write(joblst, jobs.join("\n"))
+  sh "parallel --joblog #{joblog} -j #{jobs.length} -a #{joblst}"
 end
