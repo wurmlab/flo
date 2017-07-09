@@ -50,9 +50,13 @@ task 'default' do
        " | gt gff3 -tidy -sort -addids -retainids -"     \
        " > #{outdir}/lifted_cleaned.gff"
 
-    # Symlink input gff to outdir and summarise / validate.
+    # Symlink input gff to outdir.
     sh "ln -s #{File.expand_path inp} #{outdir}/input.gff"
-    summarize outdir
+
+    # Compare input and lifted gff at CDS level.
+    sh "#{__dir__}/gff_compare.rb CDS run/source.fa run/target.fa" \
+       " #{outdir}/input.gff #{outdir}/lifted_cleaned.gff"         \
+       " > #{outdir}/unmapped.txt"
   end
 end
 
@@ -111,7 +115,6 @@ file 'run/liftover.chn' do
      ' run/liftover.chn'
 end
 
-
 ### Helpers ###
 
 def add_to_PATH(path)
@@ -127,63 +130,6 @@ end
 
 def to_sizes(twobit)
   sh "twoBitInfo #{twobit} stdout | sort -k2nr > #{twobit.ext('sizes')}"
-end
-
-def extract_cdna(fas, gff)
-  sh "gt extractfeat -type exon -join -retainids"  \
-     " -seqfile #{fas} -matchdescstart"            \
-     " #{gff} > #{gff.ext('.cdna.fa')}"
-end
-
-def extract_cds(fas, gff)
-  sh "gt extractfeat -type CDS -join -retainids"   \
-     " -seqfile #{fas} -matchdescstart"            \
-     " #{gff} > #{gff.ext('.cds.fa')}"
-end
-
-def extract_pep(fas, gff)
-  sh "gt extractfeat -type CDS -translate -join -retainids" \
-     " -seqfile #{fas} -matchdescstart"                     \
-     " #{gff} > #{gff.ext('.pep.fa')}"
-end
-
-def num_sequences(fas)
-  `grep '>' #{fas} | wc -l`.strip
-end
-
-def num_exact(fas1, fas2)
-  ENV['TMPDIR'] = Dir.pwd
-  dir = Dir.mktmpdir
-  system "grep -v '>' #{fas1} | sort > #{dir}/#{File.basename fas1}"
-  system "grep -v '>' #{fas2} | sort > #{dir}/#{File.basename fas2}"
-  `comm -12 #{dir}/#{File.basename fas1} \
-   #{dir}/#{File.basename fas2} | wc -l`.strip
-end
-
-def summarize(outdir)
-  inp_gff = "#{outdir}/input.gff"
-  out_gff = "#{outdir}/lifted_cleaned.gff"
-
-  extract_cdna('run/source.fa', inp_gff)
-  extract_cds('run/source.fa', inp_gff)
-  extract_pep('run/source.fa', inp_gff)
-
-  extract_cdna('run/target.fa', out_gff)
-  extract_cds('run/target.fa', out_gff)
-  extract_pep('run/target.fa', out_gff)
-
-  File.open("#{outdir}/summary.txt", 'w') do |file|
-    %w(cdna cds pep).each do |tag|
-      fas1 = inp_gff.ext(".#{tag}.fa")
-      fas2 = out_gff.ext(".#{tag}.fa")
-      next unless File.exist?(fas1) || File.exist?(fas2)
-
-      file.puts tag.upcase
-      file.puts "  source: #{num_sequences(fas1)}"
-      file.puts "  target: #{num_sequences(fas2)}"
-      file.puts "  exact:  #{num_exact(fas1, fas2)}"
-    end
-  end
 end
 
 def parallel(files, template)
