@@ -53,7 +53,7 @@ task 'default' do
     sh "ln -s #{File.expand_path inp} #{outdir}/input.gff"
 
     # Compare input and lifted gff at CDS level.
-    sh "#{__dir__}/gff_compare.rb CDS run/source.fa run/target.fa" \
+    sh "#{__dir__}/gff_compare.rb cds run/source.fa run/target.fa" \
        " #{outdir}/input.gff #{outdir}/lifted_cleaned.gff"         \
        " > #{outdir}/unmapped.txt"
   end
