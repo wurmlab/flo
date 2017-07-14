@@ -46,9 +46,8 @@ task 'default' do
        " #{outdir}/unlifted.gff3"
 
     # Clean lifted annotations.
-    sh "#{__dir__}/gff_recover.rb #{outdir}/lifted.gff3" \
-       " | gt gff3 -tidy -sort -addids -retainids -"     \
-       " > #{outdir}/lifted_cleaned.gff"
+    sh "#{__dir__}/gff_recover.rb #{outdir}/lifted.gff3 2> unprocessed.gff |" \
+      " gt gff3 -tidy -sort -addids -retainids - > #{outdir}/lifted_cleaned.gff"
 
     # Symlink input gff to outdir.
     sh "ln -s #{File.expand_path inp} #{outdir}/input.gff"
