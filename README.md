@@ -52,9 +52,13 @@ Install flo's dependencies in `ext/` directory in the project dir:
 Now edit `opts.yaml` to indicate:
 1. Location of source and target assembly in FASTA format (required).
 2. Location of GFF3 file(s) containing annotations on the source
-   assembly.  If this is omitted, flo will stop after generating
+   assembly. If this is omitted, flo will stop after generating
    the chain file.
-3. Number of CPU cores to use (required - not auto detected).
+3. BLAT parameters (optional). By default the target assembly is
+   assumed to be of the same species. If the target assembly is
+   a different (but closely related) species, you may want to
+   lower `minIdentity`.
+4. Number of CPU cores to use (required - not auto detected).
 
 Here, it's important to note that flo can only work with transcripts
 and their child exons and CDS. Transcripts can be annotated as: mRNA,
