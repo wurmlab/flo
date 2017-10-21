@@ -5,7 +5,6 @@ wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/liftUp"
 wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/faSplit"
 wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/liftOver"
 wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/axtChain"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/chainNet"
 wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/blat/blat"
 wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/chainSort"
 wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/faToTwoBit"
@@ -13,6 +12,11 @@ wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/twoBitInfo"
 wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/chainSplit"
 wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/chainMergeSort"
 wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/netChainSubset"
+
+wget -c "https://bds.mpi-cbg.de/hillerlab/chainCleaner/bin/chainNet"
+wget -c "https://bds.mpi-cbg.de/hillerlab/chainCleaner/bin/chainCleaner"
+wget -c "https://bds.mpi-cbg.de/hillerlab/chainCleaner/bin/NetFilterNonNested.perl"
+
 chmod +x *
 cd -
 

@@ -103,14 +103,21 @@ file 'run/liftover.chn' do
   sh 'chainMergeSort run/*.chn.sorted | chainSplit run stdin -lump=1'
   mv 'run/000.chain', 'run/combined.chn.sorted'
 
+  sh 'chainCleaner'                                                            \
+     ' run/combined.chn.sorted run/source.2bit run/target.2bit'                \
+     ' run/combined.chn.sorted.filtered run/chainCleaner.bed'                  \
+     ' -tSizes=run/source.sizes'                                               \
+     ' -qSizes=run/target.sizes'                                               \
+     ' -linearGap=medium'
+
   # Derive net file from combined, sorted chain file.
   sh 'chainNet'                                                                \
-     ' run/combined.chn.sorted run/source.sizes run/target.sizes'              \
-     ' run/combined.chn.sorted.net /dev/null'
+     ' run/combined.chn.sorted.filtered run/source.sizes run/target.sizes'     \
+     ' run/combined.chn.sorted.filtered.net /dev/null'
 
   # Subset combined, sorted chain file.
-  sh 'netChainSubset'                                                          \
-     ' run/combined.chn.sorted.net run/combined.chn.sorted'                    \
+  sh 'netChainSubset -skipMissing'                                             \
+     ' run/combined.chn.sorted.filtered.net run/combined.chn.sorted'           \
      ' run/liftover.chn'
 end
 
