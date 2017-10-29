@@ -16,21 +16,22 @@ require 'rake'
 type, source_fa, target_fa, source_gff, target_gff = ARGV
 
 def extract_cdna(fas, gff)
-  sh "gt extractfeat -type exon -join -retainids"  \
-     " -seqfile #{fas} -matchdescstart"            \
-     " #{gff} > #{gff.ext('.cdna.fa')}"
+  sh "gt gff3 -sort -retainids #{gff} | gt extractfeat" \
+     " -type exon -join -retainids -seqfile #{fas} "    \
+     " -matchdescstart - > #{gff.ext('.cdna.fa')}"
 end
 
 def extract_cds(fas, gff)
-  sh "gt extractfeat -type CDS -join -retainids"   \
-     " -seqfile #{fas} -matchdescstart"            \
-     " #{gff} > #{gff.ext('.cds.fa')}"
+  sh "gt gff3 -sort -retainids #{gff} | gt extractfeat" \
+     " -type CDS -join -retainids -seqfile #{fas}"      \
+     " -matchdescstart - > #{gff.ext('.cds.fa')}"
 end
 
 def extract_pep(fas, gff)
-  sh "gt extractfeat -type CDS -translate -join -retainids" \
-     " -seqfile #{fas} -matchdescstart"                     \
-     " #{gff} > #{gff.ext('.pep.fa')}"
+  sh "gt gff3 -sort -retainids #{gff} | gt extractfeat" \
+     " -type CDS -join -translate -retainids"           \
+     " -seqfile #{fas} -matchdescstart - >"             \
+     " #{gff.ext('.pep.fa')}"
 end
 
 def read_fa(file)
