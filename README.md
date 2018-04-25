@@ -58,7 +58,8 @@ Now edit `opts.yaml` to indicate:
    assumed to be of the same species. If the target assembly is
    a different (but closely related) species, you may want to
    lower `minIdentity`.
-4. Number of CPU cores to use (required - not auto detected).
+4. Number of CPU cores to use (required - not auto detected). This  
+   cannot be greater than the number of scaffolds in the target assembly.
 
 Here, it's important to note that flo can only work with transcripts
 and their child exons and CDS. Transcripts can be annotated as: mRNA,
