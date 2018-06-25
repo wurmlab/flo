@@ -105,9 +105,9 @@ assembly are not lifted.
 - For an ant genome (~350 Mb) we saw 90% annotations map identically to
 the new assembly (unpublished result).
 - flo has been used in:
-  - [First draft assembly and annotation of the genome of a California Endemic Oak _Quercus lobata_ Née (Fagaceae). Sork et al 2016. G3: Genes, Genomes, Genetics 6(11): 3485-3495.](https://doi.org/10.1534/g3.116.030411)
+  - [_De novo_ genome assembly of a _Plasmodium falciparum_ NF54 clone using single-molecule real-time sequencing. Bryant et al 2018. Genome Announcements 6(5) e01479-17.](http://genomea.asm.org/content/6/5/e01479-17.short)
   - [Chromosome-scale scaffolding of the black raspberry (_Rubus occidentalis_ L.) genome based on chromatin interaction data. Jibran et al 2018. Horticulture Research 5(1) 8.](https://www.nature.com/articles/s41438-017-0013-y)
-  - [_De novo_ genome assembly of a _Plasmodium falciparum_ NF54 clone using single-molecule real-time sequencing. Bryant et al 2018. Genome Announcements 6(5) e01479-17](http://genomea.asm.org/content/6/5/e01479-17.short)
+  - [First draft assembly and annotation of the genome of a California Endemic Oak _Quercus lobata_ Née (Fagaceae). Sork et al 2016. G3: Genes, Genomes, Genetics 6(11): 3485-3495.](https://doi.org/10.1534/g3.116.030411)
 
 ## Tweak flo
 If you would like to optimise how chain files are created:
