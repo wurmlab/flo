@@ -1,18 +1,12 @@
 # UCSC-Kent
-mkdir -p ext/kent/bin
-cd ext/kent/bin
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/liftUp"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/faSplit"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/liftOver"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/axtChain"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/chainNet"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/blat/blat"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/chainSort"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/faToTwoBit"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/twoBitInfo"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/chainSplit"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/chainMergeSort"
-wget -c "http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/netChainSubset"
+mkdir -p ext/kent/bin; cd ext/kent/bin
+tools=( liftUp faSplit liftOver axtChain chainNet blat chainSort faToTwoBit
+twoBitInfo chainSplit chainMergeSort netChainSubset )
+case "$(uname -s)" in
+  Darwin*) ftp_dir="http://hgdownload.cse.ucsc.edu/admin/exe/macOSX.x86_64";;
+  Linux*) ftp_dir="http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64";;
+esac
+for tool in ${tools}; do wget -c "${ftp_dir}/${tool}"; done
 chmod +x *
 cd -
 
