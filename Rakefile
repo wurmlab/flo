@@ -45,6 +45,15 @@ task 'default' do
     sh "liftOver -gff #{inp} run/liftover.chn #{outdir}/lifted.gff3" \
        " #{outdir}/unlifted.gff3"
 
+    if File.zero? "#{outdir}/lifted.gff3"
+      puts <<MSG
+liftOver's output is empty. Please make sure 1st columnn of GFF and
+chromosome, scaffold, or contig ids in source assembly match. Rerun
+flo once you have updated the GFF: it will resume from this point.
+MSG
+      exit!
+    end
+
     # Clean lifted annotations.
     sh "#{__dir__}/gff_recover.rb #{outdir}/lifted.gff3 2> unprocessed.gff |" \
       " gt gff3 -tidy -sort -addids -retainids - > #{outdir}/lifted_cleaned.gff"
