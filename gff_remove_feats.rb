@@ -10,6 +10,15 @@
 
 feat_type_to_remove, gff_file = ARGV
 
+unless feat_type_to_remove and gff_file
+  puts <<MSG
+Usage: gff_remove_feats.rb feature_type_to_remove gff_file > output_file
+
+e.g. gff_remove_feats.rb gene all_annotations.gff > transcripts_only.gff
+MSG
+  exit!
+end
+
 # Collect id of the features we want to remove.
 feat_ids_to_remove = []
 IO.foreach(gff_file) do |line|
