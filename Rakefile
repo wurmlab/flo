@@ -47,9 +47,11 @@ task 'default' do
 
     if File.zero? "#{outdir}/lifted.gff3"
       puts <<MSG
-liftOver's output is empty. Please make sure 1st columnn of GFF and
-chromosome, scaffold, or contig ids in source assembly match. Rerun
-flo once you have updated the GFF: it will resume from this point.
+liftOver's output is empty. Please make sure that annotations are in GFF3
+format and that 1st columnn of the GFF file and chromosome, scaffold, or
+contig ids in source assembly match. Either rerun flo once you have fixed
+the GFF file and the pipeline will resume from this point, or invoke
+liftOver and process the output yourself.
 MSG
       exit!
     end
