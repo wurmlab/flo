@@ -74,11 +74,13 @@ end
 file 'run/liftover.chn' do
   mkdir 'run'
 
+  source_fa = File.expand_path CONFIG[:source_fa]
+  target_fa = File.expand_path CONFIG[:target_fa]
   processes = CONFIG[:processes]
   blat_opts = CONFIG[:blat_opts]
 
-  cp CONFIG[:source_fa], 'run/source.fa'
-  cp CONFIG[:target_fa], 'run/target.fa'
+  cp source_fa, 'run/source.fa'
+  cp target_fa, 'run/target.fa'
 
   to_2bit 'run/source.fa'
   to_2bit 'run/target.fa'
