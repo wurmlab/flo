@@ -31,7 +31,7 @@ task 'default' do
   CONFIG = YAML.load_file 'flo_opts.yaml'
 
   # Add dirs specified in config to PATH.
-  Array(CONFIG[:add_to_path]).each { |path| add_to_PATH path }
+  Array(CONFIG[:add_to_path]).each { |path| add_to_PATH File.expand_path path }
 
   # Create chain file.
   task('run/liftover.chn').invoke
