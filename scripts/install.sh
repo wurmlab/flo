@@ -1,12 +1,12 @@
 # UCSC-Kent
 mkdir -p ext/kent/bin; cd ext/kent/bin
-tools=( liftUp faSplit liftOver axtChain chainNet blat chainSort faToTwoBit
-twoBitInfo chainSplit chainMergeSort netChainSubset )
+tools=(liftUp faSplit liftOver axtChain chainNet blat/blat chainSort faToTwoBit
+twoBitInfo chainSplit chainMergeSort netChainSubset)
 case "$(uname -s)" in
   Darwin*) ftp_dir="http://hgdownload.cse.ucsc.edu/admin/exe/macOSX.x86_64";;
   Linux*) ftp_dir="http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64";;
 esac
-for tool in ${tools}; do wget -c "${ftp_dir}/${tool}"; done
+for tool in ${tools[@]}; do wget -c "${ftp_dir}/${tool}"; done
 chmod +x *
 cd -
 
