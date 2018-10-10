@@ -1,0 +1,41 @@
+##gff-version 3								
+# This is a subset of gene prediction generated with AUGUSTUS (version 3.3) by								
+# Josiah Seaman <josiah@newline.us>.								
+###								
+Scaffold_1	AUGUSTUS	gene	1624	2245	0	-0	0	ID=g3
+Scaffold_1	AUGUSTUS	mRNA	1624	2245	0	-0	0	ID=g3.t1;Parent=g3
+Scaffold_1	AUGUSTUS	CDS	1624	1742	0	-0	2	ID=g3.t1.cds;Parent=g3.t1
+Scaffold_1	AUGUSTUS	CDS	2065	2245	0	-0	0	ID=g3.t1.cds;Parent=g3.t1
+Scaffold_1	AUGUSTUS	exon	1624	1742	0	-0	0	ID=g3.t1.exon1;Parent=g3.t1
+Scaffold_1	AUGUSTUS	exon	2065	2245	0	-0	0	ID=g3.t1.exon2;Parent=g3.t1
+###								
+Scaffold_2	AUGUSTUS	gene	177325	181174	0	0	0	ID=g38
+Scaffold_2	AUGUSTUS	mRNA	177325	181174	0	0	0	ID=g38.t1;Parent=g38
+Scaffold_2	AUGUSTUS	CDS	177325	177366	0	0	0	ID=g38.t1.cds;Parent=g38.t1
+Scaffold_2	AUGUSTUS	CDS	177451	177517	0	0	0	ID=g38.t1.cds;Parent=g38.t1
+Scaffold_2	AUGUSTUS	CDS	178145	178293	0	0	2	ID=g38.t1.cds;Parent=g38.t1
+Scaffold_2	AUGUSTUS	CDS	180257	180358	0	0	0	ID=g38.t1.cds;Parent=g38.t1
+Scaffold_2	AUGUSTUS	CDS	180875	180988	0	0	0	ID=g38.t1.cds;Parent=g38.t1
+Scaffold_2	AUGUSTUS	CDS	181067	181174	0	0	0	ID=g38.t1.cds;Parent=g38.t1
+Scaffold_2	AUGUSTUS	exon	177325	177366	0	0	0	ID=g38.t1.exon1;Parent=g38.t1
+Scaffold_2	AUGUSTUS	exon	177451	177517	0	0	0	ID=g38.t1.exon2;Parent=g38.t1
+Scaffold_2	AUGUSTUS	exon	178145	178293	0	0	0	ID=g38.t1.exon3;Parent=g38.t1
+Scaffold_2	AUGUSTUS	exon	180257	180358	0	0	0	ID=g38.t1.exon4;Parent=g38.t1
+Scaffold_2	AUGUSTUS	exon	180875	180988	0	0	0	ID=g38.t1.exon5;Parent=g38.t1
+Scaffold_2	AUGUSTUS	exon	181067	181174	0	0	0	ID=g38.t1.exon6;Parent=g38.t1
+Scaffold_2	AUGUSTUS	mRNA	177325	181174	0	0	0	ID=g38.t2;Parent=g38
+Scaffold_2	AUGUSTUS	CDS	177325	177366	0	0	0	ID=g38.t2.cds;Parent=g38.t2
+Scaffold_2	AUGUSTUS	CDS	177451	177517	0	0	0	ID=g38.t2.cds;Parent=g38.t2
+Scaffold_2	AUGUSTUS	CDS	178145	178293	0	0	2	ID=g38.t2.cds;Parent=g38.t2
+Scaffold_2	AUGUSTUS	CDS	180257	180358	0	0	0	ID=g38.t2.cds;Parent=g38.t2
+Scaffold_2	AUGUSTUS	CDS	180723	180746	0	0	0	ID=g38.t2.cds;Parent=g38.t2
+Scaffold_2	AUGUSTUS	CDS	180875	180988	0	0	0	ID=g38.t2.cds;Parent=g38.t2
+Scaffold_2	AUGUSTUS	CDS	181067	181174	0	0	0	ID=g38.t2.cds;Parent=g38.t2
+Scaffold_2	AUGUSTUS	exon	177325	177366	0	0	0	ID=g38.t2.exon1;Parent=g38.t2
+Scaffold_2	AUGUSTUS	exon	177451	177517	0	0	0	ID=g38.t2.exon2;Parent=g38.t2
+Scaffold_2	AUGUSTUS	exon	178145	178293	0	0	0	ID=g38.t2.exon3;Parent=g38.t2
+Scaffold_2	AUGUSTUS	exon	180257	180358	0	0	0	ID=g38.t2.exon4;Parent=g38.t2
+Scaffold_2	AUGUSTUS	exon	180723	180746	0	0	0	ID=g38.t2.exon5;Parent=g38.t2
+Scaffold_2	AUGUSTUS	exon	180875	180988	0	0	0	ID=g38.t2.exon6;Parent=g38.t2
+Scaffold_2	AUGUSTUS	exon	181067	181174	0	0	0	ID=g38.t2.exon7;Parent=g38.t2
+###								
