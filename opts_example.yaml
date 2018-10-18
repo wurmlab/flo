@@ -16,6 +16,9 @@
 :source_fa: 'unset'
 :target_fa: 'unset'
 
+#Location of output folder
+:output_path: 'unset'
+
 # Number of processes that will be used to parallelise flo. Ideally, this
 # will be the number of CPU cores you have.
 :processes: 'unset'
