@@ -2,7 +2,7 @@
 
 Lift over is a way of mapping annotations from one genome assembly to another.
 The idea "lift over" is same as what tools like UCSC LiftOver, NCBI's LiftUp
-web service do. However, NCBI and UCSC's webs services are available only for
+web service do. However, NCBI and UCSC's web services are available only for
 a limited number of species.
 
 To perform lift over locally, one can use UCSC chain files ([Kent et al 2003][kent2003])
@@ -15,6 +15,13 @@ flo is an implementation of the above script in Ruby programming language. Furth
 both liftOver and CrossMap process GFF files line by line instead of transcripts as
 a whole. This results in some non-biologically meaningful output. flo provides a
 basic filtering of UCSC liftOver's GFF output.
+
+We created flo for our work on the fire ant genome. If you use flo, please cite
+the following paper:
+
+> The fire ant social chromosome supergene variant Sb shows low diversity but
+> high divergence from SB. 2017. R Pracana, A Priyam, I Levantis, Y Wurm.
+> [Molecular Ecology, doi: 10.1111/mec.14054](http://onlinelibrary.wiley.com/doi/10.1111/mec.14054/full).
 
 [Using flo](#using-flo) | [Results & discussion](#results--discussion) | [Tweaking flo](#tweak-flo)
 
