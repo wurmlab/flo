@@ -20,6 +20,7 @@ Please install the bio gem first:
 
   sudo gem install bio
 MSG
+  exit!
 end
 
 # We can process 2-level features: transcripts and their subfeatures.
