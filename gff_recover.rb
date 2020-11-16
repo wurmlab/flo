@@ -15,7 +15,7 @@
 begin
   require 'bio/db/gff'
 rescue LoadError
-  puts <<MSG
+  $stderr.puts <<MSG
 Please install the bio gem first:
 
   sudo gem install bio

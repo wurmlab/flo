@@ -10,7 +10,7 @@ begin
   require 'bio/db/gff'
 rescue LoadError
   # Could not load BioRuby. Ask to install BioRuby and exit.
-  puts <<MSG
+  $stderr.puts <<MSG
 Please install the bio gem first:
 
   sudo gem install bio
