@@ -98,9 +98,15 @@ completed successfully, a directory is created for each given GFF3 file in
 'run/' that contains:
 1. `lifted.gff3` and `unlifted.gff3` - liftOver's output
 2. `lifted_cleaned.gff` - lifted.gff3 cleaned by flo -> final output
-3. `unmapped.txt` - id of all transcripts that couldn't be lifted.
-   Transcripts present in this list and also found in output gff
-   should be considered partial.
+3. `unmapped.txt` - id of all transcripts that were not lifted and whose
+   coding sequence before and after lift are not identical. Non-identical
+   coding sequences can be the result of SNPs and short indels between the
+   samples used to construct source and target assembly; it could be due to
+   sequencing error in the target assembly or annotation error in the source
+   assembly, or it could be that the transcript mapped to a duplicated region.
+   These transcripts are included in the final GFF, but their ids are also
+   listed here to signal lower confidence due to the difficulty in separating
+   true polymorphism from assembly errors and paralogous sequence variation.
 
 ## Results & discussion
 Both strengths and weaknesses of flo largely reflect that of the underlying
