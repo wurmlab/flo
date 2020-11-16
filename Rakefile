@@ -57,8 +57,16 @@ MSG
     end
 
     # Clean lifted annotations.
-    sh "#{__dir__}/gff_recover.rb #{outdir}/lifted.gff3 2> unprocessed.gff |" \
-      " gt gff3 -tidy -sort -addids -retainids - > #{outdir}/lifted_cleaned.gff"
+    sh "#{__dir__}/gff_recover.rb #{outdir}/lifted.gff3 2> #{outdir}/lifted_cleanup.log " \
+        "| gt gff3 -tidy -sort -addids -retainids - > #{outdir}/lifted_cleaned.gff " \
+        "2>> #{outdir}/lifted_cleanup.log"
+
+    if File.zero? "#{outdir}/lifted_cleaned.gff"
+      puts
+      puts "There was an error in processing liftOver's output. Please check " \
+           "#{outdir}/lifted_cleanup.log for error messages."
+      exit!
+    end
 
     # Symlink input gff to outdir.
     sh "ln -s #{File.expand_path inp} #{outdir}/input.gff"
