@@ -1,0 +1,28 @@
+# YAML 1.2
+---
+authors: 
+  -
+    family-names: Pracana
+    given-names: Rodrigo
+  -
+    family-names: Priyam
+    given-names: Anurag
+  -
+    family-names: Levantis
+    given-names: Ilya
+  -
+    family-names: Nichols
+    given-names: "Richard A"
+  -
+    family-names: Wurm
+    given-names: Yannick
+cff-version: "1.1.0"
+date-released: 2017-02-21
+doi: "10.1111/mec.14054"
+keywords: 
+  - "annotation lift over"
+  - pipeline
+message: "We created flo for our work on the fire ant genome. If you use flo, please cite it using these metadata."
+repository-code: "https://github.com/wurmlab/flo"
+title: "The fire ant social chromosome supergene variant Sb shows low diversity but high divergence from SB"
+...
