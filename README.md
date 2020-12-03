@@ -115,11 +115,19 @@ assemblies may split a long chain. Gene models that are split across
 different chains as well as those that are duplicated in the target
 assembly are not lifted.
 
-- For an ant genome (~350 Mb) we saw 90% annotations map identically to
-the new assembly (unpublished result).
+- For an ant genome (~350 Mb) we saw 90% annotations map identically to the new assembly (unpublished result).
 - flo has been used in:
+  - [Whole genome analysis of water buffalo and global cattle breeds highlights convergent signatures of domestication](https://www.nature.com/articles/s41467-020-18550-1)
+  - [Chromosomal assembly of the nuclear genome of the endosymbiont- bearing trypanosomatid _Angomonas deanei_](https://academic.oup.com/g3journal/advance-article/doi/10.1093/g3journal/jkaa018/6007473)
+  - [Meta-analyses of genome wide association studies in lines of laying hens divergently selected for feather pecking using imputed sequence level genotypes](https://bmcgenet.biomedcentral.com/articles/10.1186/s12863-020-00920-9)
+  - [Benchmark study comparing liftover tools for genome conversion of epigenome sequencing data](https://academic.oup.com/nargab/article/2/3/lqaa054/5881791)
+  - [PRE-1 Revealed Previous Unknown Introgression Events in Eurasian Boars during the Middle Pleistocene](https://academic.oup.com/gbe/article/12/10/1751/5869799)
+  - [The Major Histocompatibility Complex of Old World Camels—A Synopsis](https://www.mdpi.com/2073-4409/8/10/1200)
+  - Construction and comparison of three reference‐quality genome assemblies for soybean
+  - [Improved contiguity of the threespine stickleback genome using long-read sequencing](https://www.biorxiv.org/content/10.1101/2020.06.30.170787v2.abstract)
+  - [Chromosome-Scale Assembly of Winter Oilseed Rape _Brassica napus_](https://doi.org/10.3389/fpls.2020.00496)
   - [Genome improvement and genetic map construction for _Aethionema arabicum_, the first divergent branch in the Brassicaceae family](https://www.biorxiv.org/content/10.1101/662684v1.abstract)
-  - [A Single SNP Turns a Social Honey Bee (Apis mellifera) Worker into a Selfish Parasite](https://academic.oup.com/mbe/article/36/3/516/5232789)
+  - [A Single SNP Turns a Social Honey Bee (_Apis mellifera_) Worker into a Selfish Parasite](https://academic.oup.com/mbe/article/36/3/516/5232789)
   - [Updated annotation of the wild strawberry _Fragaria vesca_ V4 genome](https://www.nature.com/articles/s41438-019-0142-6)
   - [_De novo_ genome assembly of a _Plasmodium falciparum_ NF54 clone using single-molecule real-time sequencing. Bryant et al 2018. Genome Announcements 6(5): e01479-17.](http://genomea.asm.org/content/6/5/e01479-17.short)
   - [Chromosome-scale scaffolding of the black raspberry (_Rubus occidentalis_ L.) genome based on chromatin interaction data. Jibran et al 2018. Horticulture Research 5(1): 8.](https://www.nature.com/articles/s41438-017-0013-y)
