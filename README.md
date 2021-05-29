@@ -117,22 +117,25 @@ assembly are not lifted.
 
 - For an ant genome (~350 Mb) we saw 90% annotations map identically to the new assembly (unpublished result).
 - flo has been used in:
-  - [An ultra-high density SNP-based linkage map for enhancing the pikeperch (_Sander lucioperca_) genome assembly to chromosome-scale](https://www.nature.com/articles/s41598-020-79358-z)
-  - [Whole genome analysis of water buffalo and global cattle breeds highlights convergent signatures of domestication](https://www.nature.com/articles/s41467-020-18550-1)
-  - [Chromosomal assembly of the nuclear genome of the endosymbiont-bearing trypanosomatid _Angomonas deanei_](https://academic.oup.com/g3journal/advance-article/doi/10.1093/g3journal/jkaa018/6007473)
-  - [Meta-analyses of genome wide association studies in lines of laying hens divergently selected for feather pecking using imputed sequence level genotypes](https://bmcgenet.biomedcentral.com/articles/10.1186/s12863-020-00920-9)
-  - [Benchmark study comparing liftover tools for genome conversion of epigenome sequencing data](https://academic.oup.com/nargab/article/2/3/lqaa054/5881791)
-  - [PRE-1 revealed previous unknown introgression events in Eurasian boars during the middle Pleistocene](https://academic.oup.com/gbe/article/12/10/1751/5869799)
-  - [The major histocompatibility complex of old world camels — A synopsis](https://www.mdpi.com/2073-4409/8/10/1200)
-  - Construction and comparison of three reference‐quality genome assemblies for soybean
-  - [Improved contiguity of the threespine stickleback genome using long-read sequencing](https://www.biorxiv.org/content/10.1101/2020.06.30.170787v2.abstract)
-  - [Chromosome-scale assembly of winter oilseed rape _Brassica napus_](https://doi.org/10.3389/fpls.2020.00496)
-  - [Genome improvement and genetic map construction for _Aethionema arabicum_, the first divergent branch in the Brassicaceae family](https://www.biorxiv.org/content/10.1101/662684v1.abstract)
-  - [A single SNP turns a social honey bee (_Apis mellifera_) worker into a selfish parasite](https://academic.oup.com/mbe/article/36/3/516/5232789)
-  - [Updated annotation of the wild strawberry _Fragaria vesca_ V4 genome](https://www.nature.com/articles/s41438-019-0142-6)
-  - [_De novo_ genome assembly of a _Plasmodium falciparum_ NF54 clone using single-molecule real-time sequencing. Bryant et al 2018. Genome Announcements 6(5): e01479-17.](http://genomea.asm.org/content/6/5/e01479-17.short)
-  - [Chromosome-scale scaffolding of the black raspberry (_Rubus occidentalis_ L.) genome based on chromatin interaction data. Jibran et al 2018. Horticulture Research 5(1): 8.](https://www.nature.com/articles/s41438-017-0013-y)
-  - [First draft assembly and annotation of the genome of a California Endemic Oak _Quercus lobata_ Née (Fagaceae). Sork et al 2016. G3: Genes, Genomes, Genetics 6(11): 3485-3495.](https://doi.org/10.1534/g3.116.030411)
+  1. [Genomic architecture and evolutionary dynamics of a social niche polymorphism in the California harvester ant, _Pogonomyrmex californicus_](https://www.biorxiv.org/content/10.1101/2021.03.21.436260v1)
+  2. [Improved contiguity of the threespine stickleback genome using long-read sequencing](https://academic.oup.com/g3journal/article/11/2/jkab007/6114463)
+  3. [_Aethionema arabicum_ genome annotation using PacBio full-length transcripts provides a valuable resource for seed dormancy and Brassicaceae evolution research](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.15161)
+  4. [Reconstruction of the origin of a neo-Y sex chromosome and its evolution in the spotted knifejaw, _Oplegnathus punctatus_](https://academic.oup.com/mbe/article/38/6/2615/6157738)
+  5. [An ultra-high density SNP-based linkage map for enhancing the pikeperch (_Sander lucioperca_) genome assembly to chromosome-scale](https://www.nature.com/articles/s41598-020-79358-z)
+  6. [Whole genome analysis of water buffalo and global cattle breeds highlights convergent signatures of domestication](https://www.nature.com/articles/s41467-020-18550-1)
+  7. [Chromosomal assembly of the nuclear genome of the endosymbiont-bearing trypanosomatid _Angomonas deanei_](https://academic.oup.com/g3journal/advance-article/doi/10.1093/g3journal/jkaa018/6007473)
+  8. [Meta-analyses of genome wide association studies in lines of laying hens divergently selected for feather pecking using imputed sequence level genotypes](https://bmcgenet.biomedcentral.com/articles/10.1186/s12863-020-00920-9)
+  9. [Benchmark study comparing liftover tools for genome conversion of epigenome sequencing data](https://academic.oup.com/nargab/article/2/3/lqaa054/5881791)
+  10. [PRE-1 revealed previous unknown introgression events in Eurasian boars during the middle Pleistocene](https://academic.oup.com/gbe/article/12/10/1751/5869799)
+  11. [The major histocompatibility complex of old world camels — A synopsis](https://www.mdpi.com/2073-4409/8/10/1200)
+  12. Construction and comparison of three reference‐quality genome assemblies for soybean
+  13. [Chromosome-scale assembly of winter oilseed rape _Brassica napus_](https://doi.org/10.3389/fpls.2020.00496)
+  14. [Genome improvement and genetic map construction for _Aethionema arabicum_, the first divergent branch in the Brassicaceae family](https://academic.oup.com/g3journal/article/9/11/3521/6026759)
+  15. [A single SNP turns a social honey bee (_Apis mellifera_) worker into a selfish parasite](https://academic.oup.com/mbe/article/36/3/516/5232789)
+  16. [Updated annotation of the wild strawberry _Fragaria vesca_ V4 genome](https://www.nature.com/articles/s41438-019-0142-6)
+  17. [_De novo_ genome assembly of a _Plasmodium falciparum_ NF54 clone using single-molecule real-time sequencing](http://genomea.asm.org/content/6/5/e01479-17.short)
+  18. [Chromosome-scale scaffolding of the black raspberry (_Rubus occidentalis_ L.) genome based on chromatin interaction data](https://www.nature.com/articles/s41438-017-0013-y)
+  19. [First draft assembly and annotation of the genome of a California endemic Oak _Quercus lobata_ Née (Fagaceae)](https://doi.org/10.1534/g3.116.030411)
 
 ## Tweak flo
 If you would like to optimise how chain files are created:
