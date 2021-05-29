@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # UCSC-Kent
 mkdir -p ext/kent/bin; cd ext/kent/bin
 tools=(liftUp faSplit liftOver axtChain chainNet blat/blat chainSort faToTwoBit
