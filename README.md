@@ -54,7 +54,7 @@ project dir:
 
 Install flo's dependencies in `ext/` directory in the project dir:
 
-    /path/to/flo/scripts/install.sh
+    /path/to/flo/scripts/install.sh ucsc-kent parallel genometools
 
 Now edit `opts.yaml` to indicate:
 1. Location of source and target assembly in FASTA format (required).
